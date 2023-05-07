@@ -13,6 +13,7 @@ class RegExGUI:
 
         screen_width = self.window.winfo_screenwidth()
         screen_height = self.window.winfo_screenheight()
+        self.window.resizable(False, False)
 
         width = 400
         height = 250

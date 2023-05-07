@@ -9,7 +9,7 @@ class RegExGUI:
         STICKER_SIZE = 30
         self.window = ctk.CTk()
         self.window.title("Match RE")
-        self.window.iconbitmap('images/icon.ico')
+        self.window.iconbitmap('assets/icon.ico')
 
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -36,11 +36,11 @@ class RegExGUI:
         self.check_button = ctk.CTkButton(self.window, text="Check", command=self.check_regex)
         self.check_button.pack(pady=15)
 
-        self.startup = ctk.CTkImage(light_image=Image.open(path.join("images/waving_hand.png")), 
+        self.startup = ctk.CTkImage(light_image=Image.open(path.join("assets/waving_hand.png")), 
                                     size=(STICKER_SIZE, STICKER_SIZE))
-        self.thumbs_up = ctk.CTkImage(light_image=Image.open(path.join("images/thumbs_up.png")), 
+        self.thumbs_up = ctk.CTkImage(light_image=Image.open(path.join("assets/thumbs_up.png")), 
                                       size=(STICKER_SIZE, STICKER_SIZE))
-        self.thumbs_down = ctk.CTkImage(light_image=Image.open(path.join("images/thumbs_down.png")), 
+        self.thumbs_down = ctk.CTkImage(light_image=Image.open(path.join("assets/thumbs_down.png")), 
                                         size=(STICKER_SIZE, STICKER_SIZE))
         self.pop_up_sticker = ctk.CTkLabel(master=self.window, image=self.startup, text="")
         self.pop_up_sticker.pack(pady=20)

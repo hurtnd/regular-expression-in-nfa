@@ -1,6 +1,6 @@
-SIGMA = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 
-         'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 
-         's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
+from string import ascii_lowercase
+
+SIGMA = ascii_lowercase  # Алфавит из маленьких английских букв
 CONCATENATION = '+'
 UNION = '|'
 KLEENE_STAR = '*'
@@ -8,7 +8,7 @@ EMPTY_LANGUAGE = '#'
 EMPTY_WORD = 'E'
 
 
-class state:
+class State:
     label = None
     edge1 = None
     edge2 = None
@@ -20,12 +20,13 @@ class NFA:
     """
     initial = None
     accept = None
+
     def __init__(self, initial, accept):
         self.initial = initial
         self.accept = accept
 
 
-def compile(postfix):
+def thompson_construction(postfix):
     """
     Функция принимает обратную польскую запись регулярного выражения и 
     возвращает соответствующий недетерминированный конечный автомат
@@ -34,7 +35,7 @@ def compile(postfix):
     for c in postfix:
         if c == KLEENE_STAR:
             nfa1 = stack.pop()
-            initial, accept = state(), state()
+            initial, accept = State(), State()
             initial.edge1, initial.edge2 = nfa1.initial, accept
             nfa1.accept.edge1, nfa1.accept.edge2 = nfa1.initial, accept
             stack.append(NFA(initial, accept))
@@ -44,19 +45,19 @@ def compile(postfix):
             stack.append(NFA(nfa1.initial, nfa2.accept))
         elif c == UNION:
             nfa2, nfa1 = stack.pop(), stack.pop()
-            initial = state()
+            initial = State()
             initial.edge1, initial.edge2 = nfa1.initial, nfa2.initial
-            accept = state()
+            accept = State()
             nfa1.accept.edge1, nfa2.accept.edge1 = accept, accept
             stack.append(NFA(initial, accept))
         else:
-            accept, initial = state(), state()
+            accept, initial = State(), State()
             initial.label, initial.edge1 = c, accept
             stack.append(NFA(initial, accept))
     return stack.pop()
 
 
-def followes(state):
+def search_states(state):
     """
     Функция рекурсивно находит множество состояний,
     в которые можно перейти из заданного состояния
@@ -65,9 +66,9 @@ def followes(state):
     states.add(state)
     if state.label is None:
         if state.edge1 is not None:
-            states |= followes(state.edge1)
+            states |= search_states(state.edge1)
         if state.edge2 is not None:
-            states |= followes(state.edge2)
+            states |= search_states(state.edge2)
     return states
 
 
@@ -97,24 +98,24 @@ def infix_to_postfix(infix):
     return postfix
 
 
-def match(infix, string):
+def match(infix, word):
     """
     Функция принимает обратную польскую запись и слово. 
     Возвращает True если слово принадлежит регулярному выражению и 
     False в противном случае
     """
     postfix = infix_to_postfix(infix)
-    nfa = compile(postfix)
+    nfa = thompson_construction(postfix)
     current = set()
-    nexts = set()
-    current |= followes(nfa.initial)
-    for s in string:
+    incoming = set()
+    current |= search_states(nfa.initial)
+    for s in word:
         for c in current:
             if c.label == s:
-                nexts |= followes(c.edge1)
-        current = nexts
-        nexts = set()
-    return (nfa.accept in current)
+                incoming |= search_states(c.edge1)
+        current = incoming
+        incoming = set()
+    return nfa.accept in current
 
 
 def is_correct_regex(regex_str):
@@ -147,4 +148,3 @@ def is_correct_regex(regex_str):
             return True
     else:
         return False
-    

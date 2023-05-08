@@ -35,7 +35,11 @@ class RegExGUI:
 
         self.check_button = ctk.CTkButton(self.window, text="Check", command=self.check_regex)
         self.check_button.pack(pady=15)
-        self.window.bind('<Return>', self.check_regex)
+
+        def bind_enter_button(event):
+            return self.check_regex()
+        
+        self.window.bind('<Return>', bind_enter_button)
 
         self.startup = ctk.CTkImage(light_image=Image.open(path.join("assets/waving_hand.png")), 
                                     size=(STICKER_SIZE, STICKER_SIZE))
@@ -54,7 +58,7 @@ class RegExGUI:
 
         self.window.mainloop()
 
-    def check_regex(self, event):
+    def check_regex(self):
         regex = self.regex_entry.get()
         word = self.word_entry.get()
         if not is_correct_regex(regex):

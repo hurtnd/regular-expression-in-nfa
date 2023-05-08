@@ -1,7 +1,16 @@
 import customtkinter as ctk
 from RegEx import is_correct_regex, match
 from PIL import Image
-from os import path
+from os import path, sys
+
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = path.abspath(".")
+
+    return path.join(base_path, relative_path)
 
 
 class RegExGUI:
@@ -9,7 +18,7 @@ class RegExGUI:
         STICKER_SIZE = 30
         self.window = ctk.CTk()
         self.window.title("Match RE")
-        self.window.iconbitmap('assets/icon.ico')
+        self.window.iconbitmap(resource_path("assets/icon.ico"))
 
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -41,11 +50,11 @@ class RegExGUI:
         
         self.window.bind('<Return>', bind_enter_button)
 
-        self.startup = ctk.CTkImage(light_image=Image.open(path.join("assets/waving_hand.png")), 
+        self.startup = ctk.CTkImage(light_image=Image.open(resource_path("assets/waving_hand.png")), 
                                     size=(STICKER_SIZE, STICKER_SIZE))
-        self.thumbs_up = ctk.CTkImage(light_image=Image.open(path.join("assets/thumbs_up.png")), 
+        self.thumbs_up = ctk.CTkImage(light_image=Image.open(resource_path("assets/thumbs_up.png")), 
                                       size=(STICKER_SIZE, STICKER_SIZE))
-        self.thumbs_down = ctk.CTkImage(light_image=Image.open(path.join("assets/thumbs_down.png")), 
+        self.thumbs_down = ctk.CTkImage(light_image=Image.open(resource_path("assets/thumbs_down.png")), 
                                         size=(STICKER_SIZE, STICKER_SIZE))
         self.pop_up_sticker = ctk.CTkLabel(master=self.window, image=self.startup, text="")
         self.pop_up_sticker.pack(pady=10)

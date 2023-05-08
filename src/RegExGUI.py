@@ -35,6 +35,7 @@ class RegExGUI:
 
         self.check_button = ctk.CTkButton(self.window, text="Check", command=self.check_regex)
         self.check_button.pack(pady=15)
+        self.window.bind('<Return>', self.check_regex)
 
         self.startup = ctk.CTkImage(light_image=Image.open(path.join("assets/waving_hand.png")), 
                                     size=(STICKER_SIZE, STICKER_SIZE))
@@ -43,23 +44,30 @@ class RegExGUI:
         self.thumbs_down = ctk.CTkImage(light_image=Image.open(path.join("assets/thumbs_down.png")), 
                                         size=(STICKER_SIZE, STICKER_SIZE))
         self.pop_up_sticker = ctk.CTkLabel(master=self.window, image=self.startup, text="")
-        self.pop_up_sticker.pack(pady=20)
+        self.pop_up_sticker.pack(pady=10)
 
-        self.company_label = ctk.CTkLabel(self.window, text="© 2023 Mesa Research", text_color="grey")
+        self.result_label = ctk.CTkLabel(self.window, text="", text_color="#A9A9A9")
+        self.result_label.pack()
+
+        self.company_label = ctk.CTkLabel(self.window, text="© 2023 Mesa Research", text_color="#696969")
         self.company_label.pack()
 
         self.window.mainloop()
 
-    def check_regex(self):
+    def check_regex(self, event):
         regex = self.regex_entry.get()
         word = self.word_entry.get()
         if not is_correct_regex(regex):
             self.pop_up_sticker.configure(image=self.thumbs_down)
+            self.result_label.configure(text="Invalid regular expression")
             return
         if word == "":
             self.pop_up_sticker.configure(image=self.thumbs_down)
+            self.result_label.configure(text=f"Enter the word")
         else:
             if match(regex, word):
                 self.pop_up_sticker.configure(image=self.thumbs_up)
+                self.result_label.configure(text=f"The word belongs to a regular expression")
             else:
                 self.pop_up_sticker.configure(image=self.thumbs_down)
+                self.result_label.configure(text=f"The word doesn't belong to a regular expression")

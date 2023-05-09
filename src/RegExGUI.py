@@ -15,7 +15,7 @@ def resource_path(relative_path):
 
 class RegExGUI:
     def __init__(self):
-        STICKER_SIZE = 30
+        STICKER_SIZE = 40
         self.window = ctk.CTk()
         self.window.title("Match RE")
         self.window.iconbitmap(resource_path("assets/icon.ico"))
@@ -27,8 +27,8 @@ class RegExGUI:
         screen_height = self.window.winfo_screenheight()
         self.window.resizable(False, False)
 
-        width = 350
-        height = 250
+        width = 300
+        height = 300
         x = (screen_width - width) // 2
         y = (screen_height - height) // 2
 
@@ -57,13 +57,13 @@ class RegExGUI:
         self.thumbs_down = ctk.CTkImage(light_image=Image.open(resource_path("assets/thumbs_down.png")), 
                                         size=(STICKER_SIZE, STICKER_SIZE))
         self.pop_up_sticker = ctk.CTkLabel(master=self.window, image=self.startup, text="")
-        self.pop_up_sticker.pack(pady=10)
+        self.pop_up_sticker.pack(pady=30)
 
         self.result_label = ctk.CTkLabel(self.window, text="", text_color="#A9A9A9")
-        self.result_label.pack()
+        self.result_label.pack(pady=0)
 
         self.company_label = ctk.CTkLabel(self.window, text="© 2023 Mesa Research", text_color="#696969")
-        self.company_label.pack()
+        self.company_label.pack(pady=0)
 
         self.window.mainloop()
 

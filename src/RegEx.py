@@ -92,7 +92,7 @@ def infix_to_postfix(infix):
     postfix = ''  # Переменная для хранения постфиксной записи
     stack = []  # Стек для хранения операторов
 
-    for char in infix:
+    for i, char in enumerate(infix):
         # Если символ - буква алфавита, он добавляется к выходной строке в постфиксной форме
         if char.isalpha():
             postfix += char
@@ -106,6 +106,9 @@ def infix_to_postfix(infix):
                 postfix += stack.pop()
             stack.pop()
         else:
+            # Заменяем две и более подряд идущих звёзд на одну
+            if char == KLEENE_STAR and i > 0 and infix[i-1] == KLEENE_STAR:
+                continue
             # Иначе символ - оператор. Извлекаются все операторы из стека с большим или равным приоритетом 
             # и добавляются в выходную строку. Затем оператор добавляется в стек.
             while stack and stack[-1] != '(' and precedence[char] <= precedence.get(stack[-1], 0):

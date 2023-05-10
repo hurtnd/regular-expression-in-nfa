@@ -1,16 +1,11 @@
 import customtkinter as ctk
 from RegEx import is_correct_regex, match
 from PIL import Image
-from os import path, sys
+from os import path
 
 
 def resource_path(relative_path):
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = path.abspath(".")
-
-    return path.join(base_path, relative_path)
+    return path.join(path.abspath("."), relative_path)
 
 
 class RegExGUI:

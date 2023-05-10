@@ -1,11 +1,16 @@
 import customtkinter as ctk
 from RegEx import is_correct_regex, match
 from PIL import Image
-from os import path
+from os import path, sys
 
 
 def resource_path(relative_path):
-    return path.join(path.abspath("."), relative_path)
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = path.abspath(".")
+
+    return path.join(base_path, relative_path)
 
 
 class RegExGUI:
@@ -59,7 +64,7 @@ class RegExGUI:
         self.startup, self.thumbs_up, self.thumbs_down = images
 
         self.pop_up_sticker = ctk.CTkLabel(master=self.window, image=self.startup, text="")
-        self.pop_up_sticker.grid(row=3, column=0, padx=0, pady=20)
+        self.pop_up_sticker.grid(row=3, column=0, padx=0, pady=15)
 
         self.result_label = ctk.CTkLabel(self.window, text="", text_color="#A9A9A9")
         self.result_label.grid()

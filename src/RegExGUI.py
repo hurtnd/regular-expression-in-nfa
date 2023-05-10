@@ -13,7 +13,10 @@ class RegExGUI:
         STICKER_SIZE = 40
         self.window = ctk.CTk()
         self.window.title("Match RE")
-        self.window.iconbitmap(resource_path("assets/icon.ico"))
+        try:
+            self.window.iconbitmap(resource_path("../assets/icon.ico"))
+        except Exception:
+            self.window.iconbitmap(resource_path("assets/icon.ico"))
 
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("blue")
@@ -44,12 +47,17 @@ class RegExGUI:
         
         self.window.bind('<Return>', bind_enter_button)
 
-        self.startup = ctk.CTkImage(light_image=Image.open(resource_path("assets/waving_hand.png")), 
-                                    size=(STICKER_SIZE, STICKER_SIZE))
-        self.thumbs_up = ctk.CTkImage(light_image=Image.open(resource_path("assets/thumbs_up.png")), 
-                                      size=(STICKER_SIZE, STICKER_SIZE))
-        self.thumbs_down = ctk.CTkImage(light_image=Image.open(resource_path("assets/thumbs_down.png")), 
-                                        size=(STICKER_SIZE, STICKER_SIZE))
+        filenames = ["../assets/waving_hand.png", "../assets/thumbs_up.png", "../assets/thumbs_down.png"]
+        images = []
+        for filename in filenames:
+            try:
+                image = Image.open(resource_path(filename))
+            except Exception:
+                image = Image.open(resource_path(filename[3:]))
+            images.append(ctk.CTkImage(light_image=image, size=(STICKER_SIZE, STICKER_SIZE)))
+
+        self.startup, self.thumbs_up, self.thumbs_down = images
+
         self.pop_up_sticker = ctk.CTkLabel(master=self.window, image=self.startup, text="")
         self.pop_up_sticker.grid(row=3, column=0, padx=0, pady=20)
 

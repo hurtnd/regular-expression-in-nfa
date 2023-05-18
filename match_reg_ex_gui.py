@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from RegEx import is_correct_regex, match
+from match_reg_ex_algorithm import is_correct_regex, match
 from PIL import Image
 from os import path, sys
 

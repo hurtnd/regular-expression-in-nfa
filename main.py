@@ -1,4 +1,4 @@
-from RegExGUI import RegExGUI
+from match_reg_ex_gui import RegExGUI
 
 
 if __name__ == "__main__":

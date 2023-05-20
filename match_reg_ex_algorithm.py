@@ -1,6 +1,6 @@
 from string import ascii_lowercase
 
-SIGMA = ascii_lowercase  # Алфавит из маленьких английских букв
+SIGMA = ascii_lowercase
 CONCATENATION = '+'
 UNION = '|'
 KLEENE_STAR = '*'
@@ -16,7 +16,7 @@ class State:
 
 class NFA:
     """
-    Класс недетерминированного конечного автомата
+    Class of a non-deterministic finite automaton
     """
     initial = None
     accept = None
@@ -28,15 +28,15 @@ class NFA:
 
 def thompson_construction(postfix):
     """
-    Функция принимает обратную польскую запись регулярного выражения и
-    возвращает соответствующий недетерминированный конечный автомат
+    The function takes the reverse Polish notation of a regular expression and
+    returns the corresponding nondeterministic finite automaton
     """
     stack = []
     for c in postfix:
         if c == KLEENE_STAR:
             nfa1 = stack.pop()
-            initial = State()  # Начальное состояние
-            accept = State()  # Конечное состояние
+            initial = State()
+            accept = State()
             initial.edge1 = nfa1.initial
             initial.edge2 = accept
             nfa1.accept.edge1 = nfa1.initial
@@ -68,8 +68,8 @@ def thompson_construction(postfix):
 
 def search_states(state):
     """
-    Функция рекурсивно находит множество состояний,
-    в которые можно перейти из заданного состояния
+    The function recursively finds a set of states,
+    to which you can switch from a given state
     """
     states = set()
     states.add(state)
@@ -83,103 +83,75 @@ def search_states(state):
 
 def infix_to_postfix(infix):
     """
-    Функция принимает регулярное выражение и
-    делает из него обратную польскую запись
+    The function takes a regular expression and
+    makes a reverse Polish entry out of it
     """
-    # Словарь, содержащий приоритеты операторов
     precedence = {UNION: 1, CONCATENATION: 2, KLEENE_STAR: 3}
 
-    postfix = ''  # Переменная для хранения постфиксной записи
-    stack = []  # Стек для хранения операторов
+    postfix = ''
+    stack = []
 
     for i, char in enumerate(infix):
-        # Если символ - буква алфавита,
-        # он добавляется к выходной строке в постфиксной форме
         if char.isalpha():
             postfix += char
-        # Если символ - открывающая скобка, он добавляется в стек
         elif char == '(':
             stack.append(char)
-        # Если символ - закрывающая скобка,
-        # извлекаются все операторы из стека и
-        # добавляются в выходную строку до тех пор,
-        # пока не встретится открывающая скобка
         elif char == ')':
             while stack and stack[-1] != '(':
                 postfix += stack.pop()
             stack.pop()
         else:
-            # Заменяем две и более подряд идущих звёзд на одну
             if char == KLEENE_STAR and i > 0 and infix[i-1] == KLEENE_STAR:
                 continue
-            # Извлекаются все операторы из стека с большим или
-            # равным приоритетом и добавляются в выходную строку.
-            # Затем оператор добавляется в стек.
             while stack and stack[-1] != \
                     '(' and precedence[char] <= precedence.get(stack[-1], 0):
                 postfix += stack.pop()
             stack.append(char)
 
-    # Извлекаются все операторы из стека и добавляются в выходную строку
     while stack:
         postfix += stack.pop()
 
-    return postfix  # Возвращает постфиксную запись
+    return postfix
 
 
 def match(infix, word):
     """
-    Функция принимает обратную польскую запись и слово.
-    Возвращает True если слово принадлежит регулярному выражению и
-    False в противном случае
+    The function accepts the reverse Polish notation and the word.
+    Returns True if the word belongs to a regular expression and
+    False otherwise
     """
-    # Преобразуем регулярное выражение из инфиксной формы в постфиксную
     postfix = infix_to_postfix(infix)
-    # Вызываем функцию, которая по заданному регулярному выражению строит НКА
     nfa = thompson_construction(postfix)
     current = set()
     incoming = set()
-    # Вызов функции, которая возвращает множество состояний НКА,
-    # в которых автомат может находиться после перехода из начального состояния
     current |= search_states(nfa.initial)
     for s in word:
         for c in current:
             if c.label == s:
-                # Вызов функции, которая возвращает множество состояний НКА,
-                # в которые автомат может перейти по первому ребру
                 incoming |= search_states(c.edge1)
         current = incoming
-        incoming = set()  # Чистим
+        incoming = set()
     return nfa.accept in current
 
 
 def is_correct_regex(regex_str):
     """
-    Функция принимает регулярное выражение и проверят,
-    что оно правильно задано
+    The function takes a regular expression and will check,
+    that it is set correctly
     """
     if len(regex_str) > 1:
-        # Проверяем, что рег. выражение начинается и заканчивается со скобки
         if regex_str[0] == '(' and regex_str[-1] == ')':
-            # Создаем строку, которая содержит среднюю часть рег. выражения,
-            # т.е. все символы между первой и последней скобками.
             middle = regex_str[1:-1]
-            # Проходимся по всем символам в средней части регулярного выражения
             for i in range(0, len(middle)):
                 if middle[i] == CONCATENATION or middle[i] == UNION:
-                    # Содержит левую часть текущего подвыражения
                     left = middle[0:i]
-                    # Содержит правую часть текущего подвыражения
                     right = middle[i + 1:]
                     if is_correct_regex(left) and is_correct_regex(right):
                         return True
             return False
-        # Проверяем, что рег. выражение заканчивается символом звездочки Клини
         elif regex_str[-1] == KLEENE_STAR:
             return is_correct_regex(regex_str[:-1])
         else:
-            # Проверяем, что регулярное выражение не состоит из двух
-            # и более букв алфавита SIGMA подряд
             if len(regex_str) > 1 and all(c in SIGMA for c in regex_str):
                 return False
             for c in regex_str:

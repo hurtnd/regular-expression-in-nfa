@@ -69,10 +69,6 @@ class RegExGUI:
             self.window, text="", text_color="#A9A9A9")
         self.result_label.grid()
 
-        self.company_label = ctk.CTkLabel(
-            self.window, text="© 2023 Mesa Research", text_color="#696969")
-        self.company_label.grid()
-
         self.window.mainloop()
 
     def check_regex(self):
